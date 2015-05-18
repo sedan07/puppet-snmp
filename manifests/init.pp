@@ -15,11 +15,11 @@
 #
 # [*ro_community*]
 #   Read-only (RO) community string for snmptrap daemon.
-#   Default: public
+#   Default: {'public' => ''}
 #
 # [*ro_community6*]
 #   Read-only (RO) community string for IPv6.
-#   Default: public
+#   Default: {'public' => ''}
 #
 # [*rw_community*]
 #   Read-write (RW) community string.
@@ -28,22 +28,6 @@
 # [*rw_community6*]
 #   Read-write (RW) community string for IPv6.
 #   Default: none
-#
-# [*ro_network*]
-#   Network that is allowed to RO query the daemon.
-#   Default: 127.0.0.1
-#
-# [*ro_network6*]
-#   Network that is allowed to RO query the daemon via IPv6.
-#   Default: ::1/128
-#
-# [*rw_network*]
-#   Network that is allowed to RW query the daemon.
-#   Default: 127.0.0.1
-#
-# [*rw_network6*]
-#   Network that is allowed to RW query the daemon via IPv6.
-#   Default: ::1/128
 #
 # [*contact*]
 #   Responsible person for the SNMP system.

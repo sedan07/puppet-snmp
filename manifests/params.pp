@@ -26,14 +26,16 @@ class snmp::params {
     default => $::snmp_snmptrapdaddr,
   }
 
-  $ro_community = $::snmp_ro_community ? {
-    undef   => 'public',
-    default => $::snmp_ro_community,
+  if $::snmp_ro_community == undef {
+    $ro_community = { 'public' => '127.0.0.1'}
+  } else {
+    $ro_community = $::snmp_ro_community
   }
-  
-  $ro_community6 = $::snmp_ro_community6 ? {
-    undef   => 'public',
-    default => $::snmp_ro_community6,
+
+  if $::snmp_ro_community6 == undef {
+    $ro_community6 = { 'public' => '::1'}
+  } else {
+    $ro_community6 = $::snmp_ro_community6
   }
 
   $rw_community = $::snmp_rw_community ? {
@@ -42,28 +44,7 @@ class snmp::params {
   }
   
   $rw_community6 = $::snmp_rw_community6 ? {
-    undef   => undef,
     default => $::snmp_rw_community6,
-  }
-
-  $ro_network = $::snmp_ro_network ? {
-    undef   => '127.0.0.1',
-    default => $::snmp_ro_network,
-  }
-
-  $ro_network6 = $::snmp_ro_network6 ? {
-    undef   => '::1',
-    default => $::snmp_ro_network6,
-  }
-
-  $rw_network = $::snmp_rw_network ? {
-    undef   => '127.0.0.1',
-    default => $::snmp_rw_network,
-  }
-  
-  $rw_network6 = $::snmp_rw_network6 ? {
-    undef   => '::1',
-    default => $::snmp_rw_network6,
   }
 
   $contact = $::snmp_contact ? {
