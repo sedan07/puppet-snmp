@@ -2,4 +2,8 @@
 ### File managed by Puppet
 ###
 # snmpd command line options
-OPTIONS="<%= @snmpd_options %>"
+<% if @snmpd_options_include -%>
+OPTIONS="<%= @snmpd_options %> -c <%= @snmpd_custom_config %>"
+<% else -%>
+OPTIONS="<%= @snmpd_options %>
+<% end -%>

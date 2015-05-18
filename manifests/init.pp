@@ -202,6 +202,10 @@
 #   talk with Dell's OpenManage
 #   Default: false
 #
+# [*config_file_template*]
+#   Template for snmpd.conf
+#   Default: 'snmp/snmpd.conf.erb'
+#
 # === Actions:
 #
 # Installs the Net-SNMP daemon package, service, and configuration.
@@ -245,10 +249,6 @@ class snmp (
   $ro_community6           = $snmp::params::ro_community6,
   $rw_community            = $snmp::params::rw_community,
   $rw_community6           = $snmp::params::rw_community6,
-  $ro_network              = $snmp::params::ro_network,
-  $ro_network6             = $snmp::params::ro_network6,
-  $rw_network              = $snmp::params::rw_network,
-  $rw_network6             = $snmp::params::rw_network6,
   $contact                 = $snmp::params::contact,
   $location                = $snmp::params::location,
   $sysname                 = $snmp::params::sysname,
@@ -285,6 +285,9 @@ class snmp (
   $trap_service_hasstatus  = $snmp::params::trap_service_hasstatus,
   $trap_service_hasrestart = $snmp::params::trap_service_hasrestart,
   $openmanage_enable       = $snmp::params::openmanage_enable,
+  $config_file_template    = $snmp::params::config_file_template,
+  $snmpd_options_include   = $snmp::params::snmpd_options_include,
+  $snmpd_custom_config     = $snmp::params::snmpd_custom_config
 ) inherits snmp::params {
   # Validate our booleans
   validate_bool($manage_client)
@@ -293,6 +296,7 @@ class snmp (
   validate_bool($service_hasstatus)
   validate_bool($service_hasrestart)
   validate_bool($openmanage_enable)
+  validate_bool($snmpd_options_include)
 
   # Validate our arrays
   validate_array($snmptrapdaddr)
@@ -416,7 +420,7 @@ class snmp (
     owner   => 'root',
     group   => $snmp::params::service_config_dir_group,
     path    => $snmp::params::service_config,
-    content => template('snmp/snmpd.conf.erb'),
+    content => template($snmp::config_file_template),
     require => Package['snmpd'],
     notify  => Service['snmpd'],
   }
@@ -495,6 +499,17 @@ class snmp (
         Package['snmpd'],
         File['var-net-snmp'],
       ],
+    }
+  }
+ 
+  if $snmpd_options_include and $::osfamily !~ /FreeBSD|Suse/ {
+    datacat { "$snmpd_custom_config":
+      mode     => '0644',
+      owner    => 'root',
+      group    => 'root',
+      notify   => Service['snmpd'],
+      require  => File['snmpd.sysconfig'],
+      template => 'snmp/extended_miboid.conf.erb'
     }
   }
 

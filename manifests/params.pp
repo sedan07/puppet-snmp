@@ -27,13 +27,13 @@ class snmp::params {
   }
 
   if $::snmp_ro_community == undef {
-    $ro_community = { 'public' => '127.0.0.1'}
+    $ro_community = { 'public' => ['127.0.0.1']}
   } else {
     $ro_community = $::snmp_ro_community
   }
 
   if $::snmp_ro_community6 == undef {
-    $ro_community6 = { 'public' => '::1'}
+    $ro_community6 = { 'public' => ['::1']}
   } else {
     $ro_community6 = $::snmp_ro_community6
   }
@@ -153,6 +153,10 @@ class snmp::params {
     undef   => [],
     default => $::snmp_snmptrapd_config,
   }
+
+  $config_file_template = 'snmp/snmpd.conf.erb'
+  $snmpd_options_include = true 
+  $snmpd_custom_config = '/etc/snmp/extended-miboid.conf'
 
 ### The following parameters should not need to be changed.
 

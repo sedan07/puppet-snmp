@@ -11,7 +11,11 @@ export MIBS=
 SNMPDRUN=<%= @snmpdrun %>
 
 # snmpd options (use syslog, close stdin/out/err).
-SNMPDOPTS='<%= @snmpd_options %>'
+<% if @snmpd_options_include -%>
+SNMPDOPTS="<%= @snmpd_options %> -c <%= @snmpd_custom_config %>"
+<% else -%>
+SNMPDOPTS="<%= @snmpd_options %>
+<% end -%>
 
 # snmptrapd control (yes means start daemon).  As of net-snmp version
 # 5.0, master agentx support must be enabled in snmpd before snmptrapd
