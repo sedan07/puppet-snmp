@@ -9,9 +9,10 @@
 #   that will reference the script that snmp will run 
 #   Required
 #
-# [*script*]
-#   This name of the script. Do not include the scripts path name as this is hardcoded
-#   This value overrides whatever value is given to *prog*
+# [*file_script*]
+#   This is name of the script. This value must be unique.  Do not include the scripts path 
+#   name as the path name is hardcoded to "/usr/local/sbin".  This is used whether or not 
+#   the *prog* parameter is used or not
 #
 # [*index_name*]
 #   This is the name of the index i.e NET-SNMP-EXTEND-MIB::nsExtendResult."googleping"' 
@@ -26,6 +27,12 @@
 #   An array of arguments supported by the script 
 #   Default: []
 #
+# === Examples
+#
+# If the variable $snmp::snmpd_include_template_dir is set then the scripts file will be taken from 
+# this templates location - if this variable is not set then it will be taken from this modules template
+# location
+#
 # === Actions:
 #
 # Create a custom snmp configuration file thats used to extend snmp 
@@ -37,10 +44,10 @@
 # === Sample Usage:
 #
 #   snmp::custom_miboid { 'googleping':
-#     script     => 'googlepingdom.sh',
-#     index_name => 'google',
-#     prog       => '/bin/ping',
-#     args       => '-c1 www.google.com'
+#     file_script => 'googlepingdom.sh',
+#     index_name  => 'google',
+#     prog        => '/bin/ping',
+#     args        => '-c1 www.google.com'
 #   }
 #
 # === Authors:
@@ -49,25 +56,32 @@
 #
 #
 define snmp::custom_miboid (
-  $ensure     = 'present',
-  $script     = undef, 
-  $index_name = $name,
-  $prog       = undef, 
-  $args       = "" 
+  $ensure               = 'present',
+  $index_name           = $name,
+  $file_script          = undef, 
+  $script_template_dir  = undef,
+  $prog                 = undef, 
+  $args                 = "" 
 ) {
 
   # Validate our regular expressions
 
   include snmp
 
-  if $script != undef {
+  if $file_script != undef {
 
-    $manage_prog = "/usr/local/sbin/${script}"
+    if $script_template_dir == undef {
+      $manage_template = "$module_name/${file_script}"
+    } else {
+      $manage_template = "${script_template_dir}/${file_script}"
+    }
 
-    file { "${script}-snmp-script":
+    $manage_prog = "/usr/local/sbin/${file_script}"
+
+    file { "${title}-snmp-script":
       ensure => $ensure,
-      source => template("snmp/${script}"),
-      target => "/usr/local/sbin/${script}",
+      path   => $manage_prog, 
+      source => template("$manage_template"),
       mode   => '0755',
       owner  => 'root',
       group  => 'root',
@@ -76,7 +90,7 @@ define snmp::custom_miboid (
   } elsif $prog != undef {
     $manage_prog = $prog
   } else {
-    fail ("You must specify either a script or a pre-installed command to use")
+    fail ("You must specify the full path of a script or pre-installed command to use")
   }
 
   datacat_fragment {"$snmp::snmpd_custom_config-${name}":

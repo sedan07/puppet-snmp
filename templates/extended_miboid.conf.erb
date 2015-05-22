@@ -3,5 +3,7 @@
 ################################################################################
 # EXTENDING AGENT FUNCTIONALITY
 <% @data.sort.each do |index,command| -%> 
-extend <%= command['index_name'] %> <%= command['miboid'] %> <%= command['index_name'] %> <%= command['prog'] %> <%= command['args'] -%>
+extend <%= command['miboid'] %> <%= command['index_name'] %> <%= command['prog'] %> <%= command['args'] -%>
 <% end -%>
+
+################################################################################

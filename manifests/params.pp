@@ -157,7 +157,7 @@ class snmp::params {
   $config_file_template = 'snmp/snmpd.conf.erb'
   $snmpd_options_include = true 
   $snmpd_custom_config = '/etc/snmp/extended-miboid.conf'
-
+  $snmpd_include_template_dir = undef
 ### The following parameters should not need to be changed.
 
   $ensure = $::snmp_ensure ? {
