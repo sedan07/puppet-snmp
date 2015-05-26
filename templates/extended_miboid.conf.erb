@@ -1,6 +1,6 @@
 # This file is managed by Puppet
 
-<%- unless @data.empty? -%>
+<% if @data['custom_miboid'] -%>
 ################################################################################
 # EXTENDING AGENT FUNCTIONALITY
 <% @data['custom_miboid'].sort.each do |index,command| -%> 
@@ -8,7 +8,9 @@ extend <%= command['miboid'] %> <%= command['index_name'] %> <%= command['prog']
 <% end -%>
 
 ################################################################################
+<% end -%>
 
+<% if @data['proc_monitor'] -%>
 ################################################################################
 # PROCESS MONITORING
 <% @data['proc_monitor'].sort.each do |index,command| -%> 
@@ -17,5 +19,3 @@ proc <%= index %> <%= command['max'] %> <%= command['min'] -%>
 
 ################################################################################
 <% end -%>
-
-

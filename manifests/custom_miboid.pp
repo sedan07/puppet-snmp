@@ -79,12 +79,12 @@ define snmp::custom_miboid (
     $manage_prog = "/usr/local/sbin/${file_script}"
 
     file { "${title}-snmp-script":
-      ensure => $ensure,
-      path   => $manage_prog, 
-      source => template("$manage_template"),
-      mode   => '0755',
-      owner  => 'root',
-      group  => 'root',
+      ensure  => $ensure,
+      path    => $manage_prog, 
+      content => template("$manage_template"),
+      mode    => '0755',
+      owner   => 'root',
+      group   => 'root',
     }
 
   } elsif $prog != undef {
