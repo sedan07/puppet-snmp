@@ -40,10 +40,6 @@ define snmp::proc_monitor (
   $min                  = undef,
 ) {
 
-  # Validate our regular expressions
-  validate_re($min, '^[0-9]+$|undef', "This type is an integer")
-  validate_re($max, '^[0-9]+$|undef', "This type is an integer")
-
   include snmp
  
   if $max != undef and $min == undef {
