@@ -1,4 +1,4 @@
-# == Definition: snmp::snmpv3_user
+# == Definition: snmp::custom_miboid
 #
 # This definition creates a SNMPv3 user.
 #
@@ -96,10 +96,12 @@ define snmp::custom_miboid (
   datacat_fragment {"$snmp::snmpd_custom_config-${name}":
     target => "$snmp::snmpd_custom_config",
     data  => {
-      "$title" => {
-        index_name => $index_name,
-        prog       => $manage_prog,
-        args       => $args
+      "custom_miboid" => {
+	"$title" => {
+	  index_name => $index_name,
+	  prog       => $manage_prog,
+	  args       => $args
+	}
       }
     }
   }
