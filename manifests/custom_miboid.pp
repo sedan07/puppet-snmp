@@ -1,4 +1,4 @@
-# == Definition: snmp::snmpv3_user
+# == Definition: snmp::custom_miboid
 #
 # This definition creates a SNMPv3 user.
 #
@@ -79,12 +79,12 @@ define snmp::custom_miboid (
     $manage_prog = "/usr/local/sbin/${file_script}"
 
     file { "${title}-snmp-script":
-      ensure => $ensure,
-      path   => $manage_prog, 
-      source => template("$manage_template"),
-      mode   => '0755',
-      owner  => 'root',
-      group  => 'root',
+      ensure  => $ensure,
+      path    => $manage_prog, 
+      content => template("$manage_template"),
+      mode    => '0755',
+      owner   => 'root',
+      group   => 'root',
     }
 
   } elsif $prog != undef {
@@ -96,10 +96,12 @@ define snmp::custom_miboid (
   datacat_fragment {"$snmp::snmpd_custom_config-${name}":
     target => "$snmp::snmpd_custom_config",
     data  => {
-      "$title" => {
-        index_name => $index_name,
-        prog       => $manage_prog,
-        args       => $args
+      "custom_miboid" => {
+	"$title" => {
+	  index_name => $index_name,
+	  prog       => $manage_prog,
+	  args       => $args
+	}
       }
     }
   }
