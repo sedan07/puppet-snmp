@@ -59,6 +59,7 @@ define snmp::custom_miboid (
   $ensure               = 'present',
   $index_name           = $name,
   $file_script          = undef, 
+  $file_conf            = '',
   $script_template_dir  = undef,
   $prog                 = undef, 
   $args                 = "" 
@@ -77,6 +78,7 @@ define snmp::custom_miboid (
     }
 
     $manage_prog = "/usr/local/sbin/${file_script}"
+    $manage_conf = "/usr/local/etc/${name}"
 
     file { "${title}-snmp-script":
       ensure  => $ensure,
@@ -91,6 +93,17 @@ define snmp::custom_miboid (
     $manage_prog = $prog
   } else {
     fail ("You must specify the full path of a script or pre-installed command to use")
+  }
+  
+  if $file_conf != '' {
+    file { "${title}-snmp-script-conf":
+      ensure  => $ensure,
+      path    => $manage_conf, 
+      mode    => '0755',
+      owner   => 'root',
+      group   => 'root',
+      content => template("$file_conf"),
+    }
   }
 
   datacat_fragment {"$snmp::snmpd_custom_config-${name}":
