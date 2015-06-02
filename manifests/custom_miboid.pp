@@ -9,6 +9,12 @@
 #   that will reference the script that snmp will run 
 #   Required
 #
+# [*miboid*]
+#   If MIBOID is specified, then the configuration and result tables will be rooted at this 
+#   point in the OID tree, but are otherwise structured in exactly the same way. This means 
+#   that several separate extend directives can specify the same MIBOID root, without conflicting.
+#   Optional:
+#
 # [*file_script*]
 #   This is name of the script. This value must be unique.  Do not include the scripts path 
 #   name as the path name is hardcoded to "/usr/local/sbin".  This is used whether or not 
@@ -58,6 +64,7 @@
 define snmp::custom_miboid (
   $ensure               = 'present',
   $index_name           = $name,
+  $miboid               = '',
   $file_script          = undef, 
   $script_template_dir  = undef,
   $prog                 = undef, 
@@ -78,15 +85,17 @@ define snmp::custom_miboid (
 
     $manage_prog = "/usr/local/sbin/${file_script}"
 
-    file { "${title}-snmp-script":
-      ensure  => $ensure,
-      path    => $manage_prog, 
-      content => template("$manage_template"),
-      mode    => '0755',
-      owner   => 'root',
-      group   => 'root',
-    }
-
+    if !defined(File["$manage_prog"]) {
+      file { "${title}-snmp-script":
+	ensure  => $ensure,
+	path    => $manage_prog, 
+	content => template("$manage_template"),
+	mode    => '0755',
+	owner   => 'root',
+	group   => 'root',
+      }
+    } 
+   
   } elsif $prog != undef {
     $manage_prog = $prog
   } else {
@@ -99,6 +108,7 @@ define snmp::custom_miboid (
       "custom_miboid" => {
 	"$title" => {
 	  index_name => $index_name,
+          miboid     => $miboid,
 	  prog       => $manage_prog,
 	  args       => $args
 	}
