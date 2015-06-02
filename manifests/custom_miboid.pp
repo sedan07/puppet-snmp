@@ -85,7 +85,7 @@ define snmp::custom_miboid (
 
     $manage_prog = "/usr/local/sbin/${file_script}"
 
-    if !defined(File["$manage_prog"]) {
+    if defined(File["$manage_prog"]) != false  {
       file { "${title}-snmp-script":
 	ensure  => $ensure,
 	path    => $manage_prog, 
