@@ -36,30 +36,22 @@
 define snmp::proc_monitor (
   $ensure               = 'present',
   $process              = $name,
-  $max                  = undef,
-  $min                  = undef,
+  $max                  = 0, 
+  $min                  = 0 
 ) {
 
   include snmp
- 
-  if $max != undef and $min == undef {
-    $manage_max = $max
-    $manage_min = 0
-  } elsif $max =~ /^0$|^undef$/ and $min =~ /^0$|^undef$/ {
-    $manage_max = 0
-    $manage_min = 0
-  } else {
-    $manage_max = $max
-    $manage_min = $min
-  }
+
+  if !is_numeric($max) { fail ("Invalid value for max, ${max}") }
+  if !is_numeric($min) { fail ("Invalid value for min, ${min}") }
 
   datacat_fragment {"$snmp::snmpd_custom_config-${name}":
     target => "$snmp::snmpd_custom_config",
     data  => {
       "proc_monitor" => {
 	"$process" => {
-	  max     => $manage_max,
-	  min     => $manage_min
+	  max     => $max,
+	  min     => $min
 	}
       }
     }
