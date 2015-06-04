@@ -85,17 +85,16 @@ define snmp::custom_miboid (
 
     $manage_prog = "/usr/local/sbin/${file_script}"
 
-    if defined(File["$manage_prog"]) != false  {
-      file { "${title}-snmp-script":
-	ensure  => $ensure,
-	path    => $manage_prog, 
-	content => template("$manage_template"),
-	mode    => '0755',
-	owner   => 'root',
-	group   => 'root',
+    ensure_resource('file', $manage_prog,
+      {
+        ensure  => "$ensure",
+        content => template($manage_template),
+        mode    => '0755',
+        owner   => 'root',
+        group   => 'root'
       }
-    } 
-   
+    )
+ 
   } elsif $prog != undef {
     $manage_prog = $prog
   } else {
